@@ -14,3 +14,7 @@ class Pickup(Event):
         if isinstance(other, Pickup):
             return (type(self), self.id) == (type(other), other.id)
         return False
+
+    @property
+    def capacity_effect(self):
+        return -self.capacity

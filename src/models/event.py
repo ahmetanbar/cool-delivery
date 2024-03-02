@@ -13,3 +13,7 @@ class Event:
 
     def __eq__(self, other):
         return isinstance(other, Event) and self.id == other.id
+
+    @property
+    def capacity_effect(self):
+        return self.capacity

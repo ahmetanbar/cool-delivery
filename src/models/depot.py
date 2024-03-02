@@ -16,3 +16,9 @@ class Depot(Event):
         if isinstance(other, Depot):
             return (type(self), self.id) == (type(other), other.id)
         return False
+
+    @property
+    def capacity_effect(self):
+        if self.is_return:
+            return self.capacity
+        return -self.capacity

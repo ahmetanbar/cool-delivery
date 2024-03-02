@@ -1,4 +1,3 @@
-import itertools
 from dataclasses import dataclass, field
 from queue import PriorityQueue
 from typing import List
@@ -31,6 +30,9 @@ class TSPSolver:
     depot_to_delivery: Depot = field(init=False)
     depot_to_return: Depot = field(init=False)
     optimal_route: Route = field(init=False)
+    deepest_level: int = field(init=False)
+    best_cost: float = field(init=False)
+    priority_queue: PriorityQueue = field(init=False)
 
     def __post_init__(self):
         total_delivery_capacity = sum([event.capacity for event in self.events if isinstance(event, Delivery)])
@@ -40,100 +42,75 @@ class TSPSolver:
         self.depot_to_return = Depot(id=self.depot.id, x=self.depot.x, y=self.depot.y, capacity=total_pickup_capacity, is_return=True)
 
         if self.depot_to_delivery.capacity > self.vehicle.capacity:
-            raise ValueError("Vehicle capacity is less than the total delivery capacity")
+            raise ValueError("Delivery capacity exceeds vehicle capacity.")
 
-        self.count = 0
+        self.optimal_route = Route(events=[], total_distance=float('inf'))
+        self.deepest_level = len(self.events)
+        self.best_cost = 530.0  # float('inf')
+        self.priority_queue = PriorityQueue()
 
     def solve(self) -> Route:
-        optimal_route = Route(events=[], total_distance=float('inf'))
-        deepest_level = len(self.events)
-        best_cost = float('inf')
+        start_node = Node(capacity=self.vehicle.capacity)
+        start_node.add_event(self.depot_to_delivery)
+        self.priority_queue.put(start_node)
 
-        PQ = PriorityQueue()
-        start_node = Node(level=0, path=[self.depot_to_delivery], bound=0)
-        PQ.put(start_node)
+        while not self.priority_queue.empty():
+            most_promising_node: Node = self.priority_queue.get()
 
-        node_to_iterate = Node()
-        while not PQ.empty():
-            most_promising_node = PQ.get()
+            if most_promising_node.bound < self.best_cost:
+                most_promising_node.level += 1
+                remaining_events = set(self.events).difference(most_promising_node.path)
+                for remaining_event in remaining_events:
+                    self.iterate_remaining_event(most_promising_node, remaining_event, remaining_events)
 
-            if most_promising_node.bound < best_cost:
-                node_to_iterate.level = most_promising_node.level + 1
-                remaining_events = set(self.events) - set(most_promising_node.path)
-                for i in remaining_events:
-                    node_to_iterate.path = most_promising_node.path[:] + [i]
-                    node_to_iterate.bound_without_returning = most_promising_node.bound_without_returning
-
-                    if node_to_iterate.level == (deepest_level - 1):  # if all events are visited
-                        l = remaining_events - {i}
-                        node_to_iterate.path.append(l.pop())
-                        node_to_iterate.path.append(self.depot_to_return)
-
-                        route_distance = node_to_iterate.bound_without_returning + (
-                                    self.distance_matrix[node_to_iterate.path[-4].id][node_to_iterate.path[-3].id]
-                                    + self.distance_matrix[node_to_iterate.path[-3].id][node_to_iterate.path[-2].id]
-                                    + self.distance_matrix[node_to_iterate.path[-2].id][node_to_iterate.path[-1].id])
-
-                        is_route_feasible = self.is_permutation_feasible(node_to_iterate.path[:-1])
-
-                        if (route_distance < best_cost) and is_route_feasible:
-                            best_cost = route_distance
-                            optimal_route = Route(events=node_to_iterate.path, total_distance=route_distance)
-
-                    else:
-                        is_path_contain_pickup = isinstance(node_to_iterate.path[-1], Pickup)
-
-                        is_route_feasible = True
-                        if is_path_contain_pickup:
-                            is_route_feasible = self.is_permutation_feasible(node_to_iterate.path)
-
-                        if is_route_feasible:
-                            node_to_iterate.bound, node_to_iterate.bound_without_returning = self.bound(node_to_iterate)
-                            if node_to_iterate.bound < best_cost:
-                                PQ.put(node_to_iterate)
-
-                    node_to_iterate = Node(level=node_to_iterate.level)
-
-        print(optimal_route.total_distance, [event.id for event in optimal_route.events])
-        return optimal_route
-
-    def find_initial_route(self):
-        route = Route()
-        for permutation in itertools.permutations(self.events):
-            p_list = list(permutation)
-            is_feasible = self.is_permutation_feasible(p_list)
-            if is_feasible:
-                route.events = p_list
-                break
-
-        route.events.append(self.depot_to_return)
-        route.total_distance = self.length(route.events)
-        print('initialized', route.total_distance)
-        return route
-
-    def length(self, events: List[Event]) -> float:
-        self.count += 1
-        # distances = self.distance_matrix
-        # event_ids = [event.id for event in events]
-        # return np.sum(distances[event_ids[:-1], event_ids[1:]])
-        return sum([self.distance_matrix[events[i].id][events[i + 1].id] for i in range(len(events) - 1)])
+        print(self.optimal_route.total_distance, [event.id for event in self.optimal_route.events])
+        return self.optimal_route
 
     def bound(self, node: Node):
         bound_without_returning = node.bound_without_returning + self.distance_matrix[node.path[-2].id][node.path[-1].id]
         bound = bound_without_returning + self.distance_matrix[node.path[-1].id][self.depot_to_return.id]
         return bound, bound_without_returning
 
-    def is_permutation_feasible(self, events) -> bool:
-        remaining_capacity = self.vehicle.capacity
+    def iterate_remaining_event(self, most_promising_node, remaining_event, remaining_events):
+        """
+        Iterate the remaining events and put the node to the queue if the bound is less than the best cost.
+        If the node is reached to the leaf node, then check if the route is optimal and set the optimal route if it is.
+        """
+        node_to_iterate = Node(level=most_promising_node.level,
+                               capacity=most_promising_node.capacity,
+                               bound_without_returning=most_promising_node.bound_without_returning,
+                               path=most_promising_node.path[:])
 
-        for event in events:
-            if isinstance(event, Pickup):
-                remaining_capacity -= event.capacity
-                if remaining_capacity < 0:  # if the vehicle's capacity is exceeded with the current pickup
-                    return False
-                else:  # due to single pickup
-                    return True
-            elif isinstance(event, Delivery):
-                remaining_capacity += event.capacity
-            elif isinstance(event, Depot) and not event.is_return:
-                remaining_capacity -= event.capacity
+        if node_to_iterate.can_add_event(remaining_event):
+            node_to_iterate.add_event(remaining_event)
+        else:
+            return
+
+        node_to_iterate.bound, node_to_iterate.bound_without_returning = self.bound(node_to_iterate)
+
+        if self.is_node_reach_to_leaf_node(node_to_iterate):
+            left_events = remaining_events - {remaining_event}
+            leaf_event = left_events.pop()
+            if not node_to_iterate.can_add_event(leaf_event):
+                return
+            node_to_iterate.add_event(leaf_event)
+            self.check_and_set_optimal_route_if_route_is_optimal(node_to_iterate)
+
+        else:
+            self.compare_and_put_node_to_queue(node_to_iterate)
+
+        return
+
+    def compare_and_put_node_to_queue(self, node: Node):
+        if node.bound < self.best_cost:
+            self.priority_queue.put(node)
+
+    def check_and_set_optimal_route_if_route_is_optimal(self, node: Node):
+        node.bound, node.bound_without_returning = self.bound(node)
+        route_distance = node.bound
+        if route_distance < self.best_cost:
+            self.best_cost = route_distance
+            self.optimal_route = Route(events=node.path + [self.depot_to_return], total_distance=route_distance)
+
+    def is_node_reach_to_leaf_node(self, node: Node):
+        return node.level == (self.deepest_level - 1)
