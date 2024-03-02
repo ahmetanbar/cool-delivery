@@ -6,13 +6,11 @@ from src.models.event import Event
 @dataclass
 class Delivery(Event):
     def __hash__(self):
-        return hash((type(self), self.id))
+        return hash(self.id)
 
     def __eq__(self, other):
-        if isinstance(other, Delivery):
-            return (type(self), self.id) == (type(other), other.id)
-        return False
+        return isinstance(other, Event) and self.id == other.id
 
     @property
-    def capacity_effect(self):
+    def capacity_effect_to_vehicle(self):
         return self.capacity

@@ -15,5 +15,5 @@ class Event:
         return isinstance(other, Event) and self.id == other.id
 
     @property
-    def capacity_effect(self):
+    def capacity_effect_to_vehicle(self):
         return self.capacity

@@ -1,13 +1,14 @@
 import time
 import cProfile
 
-from src.solvers.tsp import TSPSolver
+from src.solvers.TSPWithBranchAndBound.solver import Solver as TSPSolver
 from src.utils.data_generator import DataGenerator
 from src.utils.distance_matrix_generator import DistanceMatrixGenerator
 
 
 def main():
-    depot, deliveries, pickups, vehicle = DataGenerator(pickup_count=3, delivery_count=8, generate_random_data=False).generate_tsp_instance()
+    depot, deliveries, pickups, vehicle = DataGenerator(pickup_count=3, delivery_count=8,
+                                                        generate_random_data=False).generate_tsp_instance()
     events = deliveries + pickups
 
     distance_matrix = DistanceMatrixGenerator.generate_distance_matrix([depot] + events)

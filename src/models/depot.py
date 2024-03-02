@@ -8,17 +8,13 @@ class Depot(Event):
     is_return: bool = False
 
     def __hash__(self):
-        # Add the hash for the Pickup class
-        return hash((type(self), self.id))
+        return hash(self.id)
 
     def __eq__(self, other):
-        # Add the equality comparison for the Pickup class
-        if isinstance(other, Depot):
-            return (type(self), self.id) == (type(other), other.id)
-        return False
+        return isinstance(other, Event) and self.id == other.id
 
     @property
-    def capacity_effect(self):
+    def capacity_effect_to_vehicle(self):
         if self.is_return:
             return self.capacity
         return -self.capacity

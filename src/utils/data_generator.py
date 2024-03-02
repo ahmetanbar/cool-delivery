@@ -42,12 +42,15 @@ class DataGenerator:
 
         depot, deliveries, pickups = self.build_pickup_delivery_and_depot_instances(pickup_data, delivery_data)
 
-        vehicle = self.build_vehicle_instance()
+        deliveries_capacity = sum([delivery.capacity for delivery in deliveries])
+        pickups_capacity = sum([pickup.capacity for pickup in pickups])
+        vehicle = self.build_vehicle_instance(deliveries_capacity, pickups_capacity)
 
         return depot, deliveries, pickups, vehicle
 
-    def build_vehicle_instance(self):
-        vehicle = Vehicle(capacity=self.vehicle_capacity_data)
+    def build_vehicle_instance(self, deliveries_capacity: int, pickups_capacity: int) -> Vehicle:
+        vehicle_capacity = max(deliveries_capacity, self.vehicle_capacity_data, pickups_capacity)
+        vehicle = Vehicle(capacity=vehicle_capacity)
         return vehicle
 
     def get_samples_from_data_instance(self, count: int) -> List[DataSample]:
