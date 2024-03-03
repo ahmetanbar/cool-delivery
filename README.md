@@ -53,15 +53,3 @@ point.
 Finally, it optimizes the routes using the nearest neighbor algorithm. For a smaller delivery group count, it also
 employs the branch and bound algorithm to find the global
 optimum.
-
-1. and visit each pickup and delivery point exactly once. Minimize the total distance traveled which is the more common
-   objective function.
-2. Maximize the number of delivery points visited with a single pickup point which is the more specific objective
-   function.
-
-There are two custom problem here for the problem:
-
-1. Solve CTSPPD by visiting all the pickup and delivery points and return to the depot and minimize the total distance
-   traveled.
-2. Solve CTSPPD by maximizing the number of delivery points visited with a single pickup point and return to the depot.
-
