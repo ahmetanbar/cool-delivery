@@ -7,7 +7,7 @@ from .path_manager import PathManager
 
 class Solver(BaseSolver):
     """
-    Capacitated Traveling Salesman Problem solver using Branch and Bound algorithm.
+    Capacitated Traveling Salesman Problem solver using Nearest Neighbor algorithm.
     The algorithm is used to find the optimal route for the vehicle to visit all the events. Events are the pickup and delivery events.
     The route is a path that starts and ends at the depot.
     """
