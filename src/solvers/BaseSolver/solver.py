@@ -3,10 +3,9 @@ from typing import List
 
 import numpy as np
 
-from src.models.delivery import Delivery
+from src.constants.event import EventConstant
 from src.models.depot import Depot
 from src.models.event import Event
-from src.models.pickup import Pickup
 from src.models.route import Route
 from src.models.vehicle import Vehicle
 from abc import ABC, abstractmethod
@@ -22,19 +21,15 @@ class BaseSolver(ABC):
     vehicle: Vehicle
     distance_matrix: np.ndarray
 
-    depot_to_delivery: Depot = field(init=False)
-    depot_to_return: Depot = field(init=False)
+    depot_to_delivery: Event = field(init=False)
+    depot_to_return: Event = field(init=False)
 
     def __post_init__(self):
-        # Initialize depot events.
-        self.initialize_depot_events()
+        self.depot_to_delivery = Event(id=self.depot.location_index, location_index=self.depot.location_index, x=self.depot.x,
+                                       y=self.depot.y, type=EventConstant.EventType.DEPOT_START)
 
-    def initialize_depot_events(self):
-        total_delivery_capacity = sum([event.capacity for event in self.events if isinstance(event, Delivery)])
-        self.depot_to_delivery = Depot(id=self.depot.id, x=self.depot.x, y=self.depot.y, capacity=total_delivery_capacity)
-
-        total_pickup_capacity = sum([event.capacity for event in self.events if isinstance(event, Pickup)])
-        self.depot_to_return = Depot(id=self.depot.id, x=self.depot.x, y=self.depot.y, capacity=total_pickup_capacity, is_return=True)
+        self.depot_to_return = Event(id=self.depot.location_index, location_index=self.depot.location_index, x=self.depot.x, y=self.depot.y,
+                                     type=EventConstant.EventType.DEPOT_END)
 
     @abstractmethod
     def solve(self) -> Route:

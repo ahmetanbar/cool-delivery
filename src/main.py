@@ -1,14 +1,16 @@
-import time
-import cProfile
-
 import matplotlib.pyplot as plt
+import typer
 from loguru import logger
 
-from src.solvers.CTSPWithBranchAndBound.solver import Solver as TSPSolver
-from src.solvers.CTSPWithNearestNeighbor.solver import Solver as TSPWithNearestNeighborSolver
-from src.solvers.CTSPWithMaximumDeliveryAndSinglePickup.solver import Solver as CTSPSolver
-from src.data_generators.events_generator import EventsGenerator
-from src.data_generators.distance_matrix_generator import DistanceMatrixGenerator
+from src.constants.solver import SolverConstant
+from src.data_helper.data_generator import DataGenerator
+from src.data_helper.instance_generator import InstanceGenerator
+from src.data_helper.output_helper import OutputHelper
+
+app = typer.Typer()
+
+OUTPUT_FOLDER = "src/data/outputs/"
+INPUT_FOLDER = "src/data/inputs/"
 
 
 def visualize_coordinates(events):
@@ -31,46 +33,38 @@ def visualize_coordinates(events):
     plt.show()
 
 
-def wrapper_to_profile(func):
-    def wrapper(*args, **kwargs):
-        start_time = time.time()
-
-        # profiler = cProfile.Profile()
-        # profiler.enable()
-
-        result = func(*args, **kwargs)
-
-        # profiler.disable()
-        # profiler.print_stats(sort='cumulative')
-
-        elapsed_time = time.time() - start_time
-        logger.debug(f"Elapsed time: {elapsed_time}")
-        return result
-
-    return wrapper
+def get_data_from_file(file_path):
+    depot, vehicle, events, distance_matrix = InstanceGenerator(file_path).generate()
+    return depot, vehicle, events, distance_matrix
 
 
-def main():
-    depot, deliveries, pickups, vehicle = EventsGenerator(pickup_count=10, delivery_count=10,
-                                                          generate_random_data=False).generate_tsp_instance()
-    vehicle.capacity = 150
-    events = deliveries + pickups
+@app.command()
+def solve(solver: SolverConstant.Name, input_file: str, output_file: str, visualize: bool = False):
+    input_file = INPUT_FOLDER + input_file
+    output_file = OUTPUT_FOLDER + output_file
 
-    distance_matrix = DistanceMatrixGenerator.generate_distance_matrix([depot] + events)
+    solver_class = SolverConstant.STR_TO_CLASS.get(solver)
 
-    start_time = time.time()
+    depot, vehicle, events, distance_matrix = get_data_from_file(input_file)
 
-    solver = CTSPSolver(depot=depot, events=events, vehicle=vehicle, distance_matrix=distance_matrix)
-    optimal_route = solver.solve()
+    solver_instance = solver_class(depot=depot, events=events, vehicle=vehicle, distance_matrix=distance_matrix)
+    optimal_route = solver_instance.solve()
+
+    OutputHelper.save_to_file(route=optimal_route, output_file=output_file, solver=solver)
 
     logger.debug(optimal_route)
 
-    elapsed_time = time.time() - start_time
+    if visualize:
+        visualize_coordinates(optimal_route.events)
 
-    visualize_coordinates(optimal_route.events)
 
-    logger.debug(f"Elapsed time: {elapsed_time}")
+@app.command()
+def generate(pickup_count: int, delivery_count: int, depot_x: int = 0, depot_y: int = 0, output_file="input.json"):
+    output_file = "src/data/inputs/" + output_file
+    DataGenerator(pickup_count=pickup_count, delivery_count=delivery_count, depot_x=depot_x, depot_y=depot_y,
+                  output_file=output_file).generate()
+    logger.debug(f"Data is generated and saved to {output_file}")
 
 
 if __name__ == '__main__':
-    main()
+    app()

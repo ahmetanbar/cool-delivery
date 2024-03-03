@@ -1,13 +1,16 @@
 from dataclasses import dataclass
-from abc import ABC, abstractmethod
+
+from src.constants.event import EventConstant
 
 
 @dataclass
-class Event(ABC):
+class Event:
     id: int
     x: int
     y: int
+    location_index: int
     capacity: int = 0
+    type: EventConstant.EventType.EVENT = EventConstant.EventType.EVENT
 
     def __hash__(self):
         return hash(self.id)
@@ -16,21 +19,24 @@ class Event(ABC):
         return isinstance(other, Event) and self.id == other.id
 
     @property
-    @abstractmethod
     def capacity_effect_to_vehicle(self):
-        ...
+        if self.is_pickup or self.is_depot_end:
+            return -self.capacity
+        else:
+            return self.capacity
 
     @property
-    @abstractmethod
     def is_delivery(self):
-        ...
+        return self.type == EventConstant.EventType.DELIVERY
 
     @property
-    @abstractmethod
     def is_pickup(self):
-        ...
+        return self.type == EventConstant.EventType.PICKUP
 
     @property
-    @abstractmethod
-    def is_depot(self):
-        ...
+    def is_depot_start(self):
+        return self.type == EventConstant.EventType.DEPOT_START
+
+    @property
+    def is_depot_end(self):
+        return self.type == EventConstant.EventType.DEPOT_END

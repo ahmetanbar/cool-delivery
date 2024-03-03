@@ -1,5 +1,4 @@
 import itertools
-from dataclasses import dataclass
 from typing import List
 from queue import PriorityQueue
 
@@ -67,7 +66,7 @@ class Solver(BaseSolver):
                 best_route.total_cost = route_to_find_global_optimum.total_cost
                 best_route.events = route_to_find_global_optimum.events
 
-            events = [event for event in route_to_find_global_optimum.events if not event.is_depot]
+            events = [event for event in route_to_find_global_optimum.events if not (event.is_depot_start or event.is_depot_end)]
             route = TSPWithBranchAndBoundSolver(depot=self.depot, events=events,
                                                 vehicle=self.vehicle, distance_matrix=self.distance_matrix,
                                                 best_cost=best_route.total_cost

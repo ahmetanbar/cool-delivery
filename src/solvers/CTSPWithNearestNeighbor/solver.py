@@ -1,7 +1,7 @@
-from dataclasses import dataclass
-
 from loguru import logger
 
+from src.constants.event import EventConstant
+from src.models.event import Event
 from src.models.route import Route
 from src.solvers.BaseSolver.solver import BaseSolver
 from src.solvers.CTSPWithNearestNeighbor.models.path_manager import PathManager
@@ -21,9 +21,14 @@ class Solver(BaseSolver):
 
     def __post_init__(self):
         super().__post_init__()
+        total_delivery_capacity = sum([event.capacity for event in self.events if event.is_delivery])
+        self.depot_to_delivery.capacity = total_delivery_capacity
+
+        total_pickup_capacity = sum([event.capacity for event in self.events if event.is_pickup])
+        self.depot_to_return.capacity = total_pickup_capacity
 
         if self.depot_to_delivery.capacity > self.vehicle.capacity or self.depot_to_return.capacity > self.vehicle.capacity:
-            raise ValueError("Delivery capacity exceeds vehicle capacity.")
+            raise ValueError("Delivery or Pickup capacity exceeds vehicle capacity. Solution is not possible.")
 
     def solve(self) -> Route:
         num_events = len(self.events)
