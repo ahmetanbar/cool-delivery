@@ -19,12 +19,13 @@ There are two cases for the problem:
 ## Objective Function:
 
 For the first case, the objective is to minimize the total distance traveled.
+
 For the second case, it is really custom case but the objective is to maximize the number of delivery points visited
 with a single pickup point. Also, the second objective is to minimize the total distance traveled.
 
 ## Solvers:
 
-### Vehicle visits all delivery and pickup points - Optimizes the total distance traveled
+### Case 1: Vehicle visits all delivery and pickup points - Optimizes the total distance traveled
 
 #### 1. Branch and Bound Solver
 
@@ -42,14 +43,19 @@ delivery events.
 It provides a good solution for the problem, not an optimal one. It is efficient for large-scale problems. It is
 recommended to use this solver for large-scale problems.
 
-### Vehicle visits limited delivery and pickup points - Maximizes the number of delivery points visited with a single pickup point
+### Case 2: Vehicle visits limited delivery and pickup points - Maximizes the number of delivery points visited with a single pickup point
 
 #### 3. Maximum Delivery and Single Pickup Solver
 
-This solver prioritizes finding delivery groups with maximum size along with a single pickup event. It employs a
-combination of heuristics.
-First, it identifies maximum delivery group combinations. And then, it combines these groups for each single pickup
-point.
-Finally, it optimizes the routes using the nearest neighbor algorithm. For a smaller delivery group count, it also
-employs the branch and bound algorithm to find the global
-optimum.
+This solver prioritizes finding delivery groups with maximum size along with a single pickup event.
+It employs a combination of heuristics.
+
+1. First, it identifies maximum delivery group combinations.
+2. And then, it combines these groups for each single pickup
+   point.
+3. It optimizes the routes using the nearest neighbor algorithm.
+4. If the maximum delivery count is not larger than a threshold, it employs
+   the branch and bound algorithm to find the global optimum for the first N solution with minimum distance found in
+   previous step. The best one is selected as the final solution.
+5. If the maximum delivery count is larger than a threshold, the solution with minimum distance found in 3. step is
+   selected as the final solution.
