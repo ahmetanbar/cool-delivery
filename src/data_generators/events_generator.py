@@ -17,7 +17,7 @@ class DataSample:
 
 
 @dataclass
-class DataGenerator:
+class EventsGenerator:
     depot_x: int = 0
     depot_y: int = 0
     pickup_count: int = 10

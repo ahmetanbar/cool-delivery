@@ -2,12 +2,13 @@ import time
 import cProfile
 
 import matplotlib.pyplot as plt
+from loguru import logger
 
 from src.solvers.CTSPWithBranchAndBound.solver import Solver as TSPSolver
 from src.solvers.CTSPWithNearestNeighbor.solver import Solver as TSPWithNearestNeighborSolver
 from src.solvers.CTSPWithMaximumDeliveryAndSinglePickup.solver import Solver as CTSPSolver
-from src.utils.data_generator import DataGenerator
-from src.utils.distance_matrix_generator import DistanceMatrixGenerator
+from src.data_generators.events_generator import EventsGenerator
+from src.data_generators.distance_matrix_generator import DistanceMatrixGenerator
 
 
 def visualize_coordinates(events):
@@ -30,32 +31,45 @@ def visualize_coordinates(events):
     plt.show()
 
 
+def wrapper_to_profile(func):
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+
+        # profiler = cProfile.Profile()
+        # profiler.enable()
+
+        result = func(*args, **kwargs)
+
+        # profiler.disable()
+        # profiler.print_stats(sort='cumulative')
+
+        elapsed_time = time.time() - start_time
+        logger.debug(f"Elapsed time: {elapsed_time}")
+        return result
+
+    return wrapper
+
+
 def main():
-    depot, deliveries, pickups, vehicle = DataGenerator(pickup_count=2, delivery_count=8,
-                                                        generate_random_data=False).generate_tsp_instance()
+    depot, deliveries, pickups, vehicle = EventsGenerator(pickup_count=10, delivery_count=10,
+                                                          generate_random_data=False).generate_tsp_instance()
     vehicle.capacity = 150
     events = deliveries + pickups
 
     distance_matrix = DistanceMatrixGenerator.generate_distance_matrix([depot] + events)
 
     start_time = time.time()
-    profiler = cProfile.Profile()
-    profiler.enable()
 
     solver = CTSPSolver(depot=depot, events=events, vehicle=vehicle, distance_matrix=distance_matrix)
     optimal_route = solver.solve()
 
-    profiler.disable()
-
-    profiler.print_stats(sort='cumulative')
+    logger.debug(optimal_route)
 
     elapsed_time = time.time() - start_time
 
     visualize_coordinates(optimal_route.events)
 
-    print(elapsed_time)
-
-    # print(optimal_route)
+    logger.debug(f"Elapsed time: {elapsed_time}")
 
 
 if __name__ == '__main__':

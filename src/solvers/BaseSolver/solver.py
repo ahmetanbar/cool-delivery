@@ -15,7 +15,7 @@ from abc import ABC, abstractmethod
 @dataclass
 class BaseSolver(ABC):
     """
-    Base Solver for the Traveling Salesman Problem.
+    Base Solver for the Capacitated Traveling Salesman Problem.
     """
     depot: Depot
     events: List[Event]  # pickup and deliveries
@@ -35,9 +35,6 @@ class BaseSolver(ABC):
 
         total_pickup_capacity = sum([event.capacity for event in self.events if isinstance(event, Pickup)])
         self.depot_to_return = Depot(id=self.depot.id, x=self.depot.x, y=self.depot.y, capacity=total_pickup_capacity, is_return=True)
-
-        if self.depot_to_delivery.capacity > self.vehicle.capacity or self.depot_to_return.capacity > self.vehicle.capacity:
-            raise ValueError("Delivery capacity exceeds vehicle capacity.")
 
     @abstractmethod
     def solve(self) -> Route:

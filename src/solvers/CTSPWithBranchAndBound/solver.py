@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from queue import PriorityQueue
 
+from loguru import logger
+
 from src.solvers.BaseSolver.solver import BaseSolver
 from src.solvers.CTSPWithBranchAndBound.models.node import Node
 from src.models.route import Route
@@ -17,6 +19,8 @@ class Solver(BaseSolver):
 
     It doesn't use original Branch and Bound algorithm. It uses a modified version of the algorithm.
     Bounds are calculated using the distance matrix and the capacity of the vehicle.
+
+    Best cost parameter is used to be able to start with a best cost value.
     """
     best_cost: float = float('inf')
 
@@ -26,6 +30,9 @@ class Solver(BaseSolver):
 
     def __post_init__(self):
         super().__post_init__()
+
+        if self.depot_to_delivery.capacity > self.vehicle.capacity or self.depot_to_return.capacity > self.vehicle.capacity:
+            raise ValueError("Delivery capacity exceeds vehicle capacity.")
 
         # Initialize the solver variables.
         self.optimal_route = Route(events=[], total_cost=float('inf'))
@@ -46,7 +53,7 @@ class Solver(BaseSolver):
                 for remaining_event in remaining_events:
                     self.iterate_remaining_event(most_promising_node, remaining_event, remaining_events)
 
-        print(self.optimal_route)
+        logger.debug(self.optimal_route)
         return self.optimal_route
 
     def bound(self, node: Node):

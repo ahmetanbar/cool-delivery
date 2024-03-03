@@ -14,4 +14,4 @@ class Route:
 
     def __str__(self):
         event_info = ", ".join(f"({event.id}, {event.__class__.__name__})" for event in self.events)
-        return f"Route:\n  -> Cost: {self.total_cost}\n  -> Path: {event_info}"
+        return f"\nRoute:\n  -> Cost: {self.total_cost}\n  -> Path: {event_info}"
