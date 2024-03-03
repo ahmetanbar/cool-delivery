@@ -1,20 +1,13 @@
 from dataclasses import dataclass, field
 from queue import PriorityQueue
-from typing import List
 
-import numpy as np
-
-from src.models.delivery import Delivery
-from src.models.depot import Depot
-from src.models.event import Event
+from src.solvers.BaseSolver.solver import BaseSolver
 from src.solvers.CTSPWithBranchAndBound.models.node import Node
-from src.models.pickup import Pickup
 from src.models.route import Route
-from src.models.vehicle import Vehicle
 
 
 @dataclass
-class Solver:
+class Solver(BaseSolver):
     """
     Traveling Salesman Problem solver using Branch and Bound algorithm.
     The algorithm is used to solve the TSP for the given distance matrix and events.
@@ -25,36 +18,19 @@ class Solver:
     It doesn't use original Branch and Bound algorithm. It uses a modified version of the algorithm.
     Bounds are calculated using the distance matrix and the capacity of the vehicle.
     """
-    depot: Depot
-    events: List[Event]  # pickup and deliveries
-    vehicle: Vehicle
-    distance_matrix: np.ndarray
     best_cost: float = float('inf')
 
-    depot_to_delivery: Depot = field(init=False)
-    depot_to_return: Depot = field(init=False)
     optimal_route: Route = field(init=False)
     deepest_level: int = field(init=False)
     priority_queue: PriorityQueue = field(init=False)
 
     def __post_init__(self):
-        # Initialize depot events.
-        self.initialize_depot_events()
+        super().__post_init__()
 
         # Initialize the solver variables.
         self.optimal_route = Route(events=[], total_cost=float('inf'))
         self.deepest_level = len(self.events)
         self.priority_queue = PriorityQueue()
-
-    def initialize_depot_events(self):
-        total_delivery_capacity = sum([event.capacity for event in self.events if isinstance(event, Delivery)])
-        self.depot_to_delivery = Depot(id=self.depot.id, x=self.depot.x, y=self.depot.y, capacity=total_delivery_capacity)
-
-        total_pickup_capacity = sum([event.capacity for event in self.events if isinstance(event, Pickup)])
-        self.depot_to_return = Depot(id=self.depot.id, x=self.depot.x, y=self.depot.y, capacity=total_pickup_capacity, is_return=True)
-
-        if self.depot_to_delivery.capacity > self.vehicle.capacity or self.depot_to_return.capacity > self.vehicle.capacity:
-            raise ValueError("Delivery capacity exceeds vehicle capacity.")
 
     def solve(self) -> Route:
         start_node = Node(capacity=self.vehicle.capacity)

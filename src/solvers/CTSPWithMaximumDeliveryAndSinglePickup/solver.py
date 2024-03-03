@@ -3,28 +3,20 @@ from dataclasses import dataclass
 from typing import List
 from queue import PriorityQueue
 
-import numpy as np
-
-from src.models.depot import Depot
 from src.models.event import Event
 from src.models.route import Route
-from src.models.vehicle import Vehicle
+from src.solvers.BaseSolver.solver import BaseSolver
 from src.solvers.CTSPWithNearestNeighbor.solver import Solver as TSPWithNearestNeighborSolver
 from src.solvers.CTSPWithBranchAndBound.solver import Solver as TSPWithBranchAndBoundSolver
 
 
 @dataclass
-class Solver:
+class Solver(BaseSolver):
     """
     Solver for the Capacitated Traveling Salesman Problem with Maximum Delivery and Single Pickup.
     """
     MAXIMUM_EVENT_SIZE_TO_FIND_GLOBAL_OPTIMUM = 9
     MAXIMUM_TRY_COUNT_WITH_NEAREST_NEIGHBOR_SOLUTIONS = 10
-
-    depot: Depot
-    events: List[Event]  # pickup and deliveries
-    vehicle: Vehicle
-    distance_matrix: np.ndarray
 
     def solve(self):
         pickups = self.get_pickups()
