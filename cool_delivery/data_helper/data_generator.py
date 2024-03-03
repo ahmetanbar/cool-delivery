@@ -7,9 +7,7 @@ from scipy.spatial.distance import cdist
 import numpy as np
 
 from cool_delivery.constants.event import EventConstant
-from cool_delivery.models.depot import Depot
-from cool_delivery.models.event import Event
-from cool_delivery.models.vehicle import Vehicle
+from cool_delivery.models import Depot, Event, Vehicle
 
 
 @dataclass

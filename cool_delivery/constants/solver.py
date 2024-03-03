@@ -1,8 +1,8 @@
 from enum import StrEnum
 
-from cool_delivery.solvers.CTSPWithBranchAndBound.solver import Solver as CTSPWithBranchAndBoundSolver
-from cool_delivery.solvers.CTSPWithNearestNeighbor.solver import Solver as CTSPWithNearestNeighborSolver
-from cool_delivery.solvers.CTSPWithMaximumDeliveryAndSinglePickup.solver import Solver as CTSPWithMaximumDeliveryAndSinglePickupSolver
+from cool_delivery.solvers import (CTSPWithBranchAndBoundSolver,
+                                   CTSPWithNearestNeighborSolver,
+                                   CTSPWithMaximumDeliveryAndSinglePickupSolver)
 
 
 class SolverConstant:

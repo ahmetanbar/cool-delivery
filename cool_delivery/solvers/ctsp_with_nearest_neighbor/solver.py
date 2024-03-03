@@ -1,8 +1,8 @@
 from loguru import logger
 
-from cool_delivery.models.route import Route
-from cool_delivery.solvers.BaseSolver.solver import BaseSolver
-from cool_delivery.solvers.CTSPWithNearestNeighbor.models.path_manager import PathManager
+from cool_delivery.models import Route
+from cool_delivery.solvers import BaseSolver
+from .path_manager import PathManager
 
 
 class Solver(BaseSolver):

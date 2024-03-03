@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List
 
-from cool_delivery.models.event import Event
+from cool_delivery.models import Event
 
 
 @dataclass

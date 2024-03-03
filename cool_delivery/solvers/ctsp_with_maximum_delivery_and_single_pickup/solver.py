@@ -4,11 +4,8 @@ from queue import PriorityQueue
 
 from loguru import logger
 
-from cool_delivery.models.event import Event
-from cool_delivery.models.route import Route
-from cool_delivery.solvers.BaseSolver.solver import BaseSolver
-from cool_delivery.solvers.CTSPWithNearestNeighbor.solver import Solver as CTSPWithNearestNeighborSolver
-from cool_delivery.solvers.CTSPWithBranchAndBound.solver import Solver as CTSPWithBranchAndBoundSolver
+from cool_delivery.models import Event, Route
+from cool_delivery.solvers import BaseSolver, CTSPWithNearestNeighborSolver, CTSPWithBranchAndBoundSolver
 
 
 class Solver(BaseSolver):
