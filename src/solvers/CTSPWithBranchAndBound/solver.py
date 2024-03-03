@@ -3,8 +3,6 @@ from queue import PriorityQueue
 
 from loguru import logger
 
-from src.constants.event import EventConstant
-from src.models.event import Event
 from src.solvers.BaseSolver.solver import BaseSolver
 from src.solvers.CTSPWithBranchAndBound.models.node import Node
 from src.models.route import Route
@@ -13,16 +11,14 @@ from src.models.route import Route
 @dataclass
 class Solver(BaseSolver):
     """
-    Traveling Salesman Problem solver using Branch and Bound algorithm.
-    The algorithm is used to solve the TSP for the given distance matrix and events.
-    Events are the pickup and delivery events. The algorithm is used to find the optimal route for the vehicle to visit all the events.
-
-    A route is a path that starts and ends at the depot.
+    Capacitated Traveling Salesman Problem solver using Branch and Bound algorithm.
+    The algorithm is used to find the optimal route for the vehicle to visit all the events. Events are the pickup and delivery events.
+    The route is a path that starts and ends at the depot.
 
     It doesn't use original Branch and Bound algorithm. It uses a modified version of the algorithm.
     Bounds are calculated using the distance matrix and the capacity of the vehicle.
 
-    Best cost parameter is used to be able to start with a best cost value.
+    Best cost parameter is used to be able to start with a defined best cost value when searching in bounds.
     """
     best_cost: float = float('inf')
 
@@ -64,8 +60,9 @@ class Solver(BaseSolver):
         return self.optimal_route
 
     def bound(self, node: Node):
-        bound_without_returning = node.bound_without_returning + self.distance_matrix[node.path[-2].id][node.path[-1].id]
-        bound = bound_without_returning + self.distance_matrix[node.path[-1].id][self.depot_to_return.id]
+        bound_without_returning = node.bound_without_returning + self.distance_matrix[node.path[-2].location_index][
+            node.path[-1].location_index]
+        bound = bound_without_returning + self.distance_matrix[node.path[-1].location_index][self.depot_to_return.location_index]
         return bound, bound_without_returning
 
     def iterate_remaining_event(self, most_promising_node, remaining_event, remaining_events):

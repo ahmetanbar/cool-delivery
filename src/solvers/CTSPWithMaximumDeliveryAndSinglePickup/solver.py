@@ -7,26 +7,25 @@ from loguru import logger
 from src.models.event import Event
 from src.models.route import Route
 from src.solvers.BaseSolver.solver import BaseSolver
-from src.solvers.CTSPWithNearestNeighbor.solver import Solver as TSPWithNearestNeighborSolver
-from src.solvers.CTSPWithBranchAndBound.solver import Solver as TSPWithBranchAndBoundSolver
+from src.solvers.CTSPWithNearestNeighbor.solver import Solver as CTSPWithNearestNeighborSolver
+from src.solvers.CTSPWithBranchAndBound.solver import Solver as CTSPWithBranchAndBoundSolver
 
 
 class Solver(BaseSolver):
     """
-    Solver for the Capacitated Traveling Salesman Problem with Maximum Delivery and Single Pickup.
-
-    Events are the pickup and delivery events. The algorithm is used to find the optimal route for the vehicle to
-    visit maximum delivery events and a single pickup event.
+    Capacitated Traveling Salesman Problem with Maximum Delivery and Single Pickup solver.
+    The algorithm is used to find the optimal route for the vehicle to visit maximum delivery events and a single pickup event.
+    The route is a path that starts and ends at the depot.
 
     First priority is to find the delivery groups with maximum size with a single pickup event. Secondly, it tries to optimize the route.
 
-    It first finds the delivery groups with maximum size.
+    It first finds the delivery group combinations with maximum size.
     Then, it tries to find the optimal route for each delivery group with the nearest neighbor algorithm.
 
     If the event count is less than or equal to the maximum event size to find the global optimum,
     it tries to find the global optimum by using the branch and bound algorithm.
     """
-    MAXIMUM_EVENT_SIZE_TO_FIND_GLOBAL_OPTIMUM = 9
+    MAXIMUM_EVENT_SIZE_TO_FIND_GLOBAL_OPTIMUM = 10
     MAXIMUM_TRY_COUNT_WITH_NEAREST_NEIGHBOR_SOLUTIONS = 10
 
     def solve(self):
@@ -51,7 +50,7 @@ class Solver(BaseSolver):
         logger.debug(best_route)
         return best_route
 
-    def find_best_solution_with_branch_and_bound(self, best_route, priority_queue):
+    def find_best_solution_with_branch_and_bound(self, best_route: Route, priority_queue: PriorityQueue):
         """Finds best solution with branch and bound algorithm.
         It uses first self.MAXIMUM_TRY_COUNT_WITH_NEAREST_NEIGHBOR_SOLUTIONS solutions from the priority queue.
         It solves the TSP for each solution with the branch and bound algorithm. According to solutions, it updates best route.
@@ -67,22 +66,22 @@ class Solver(BaseSolver):
                 best_route.events = route_to_find_global_optimum.events
 
             events = [event for event in route_to_find_global_optimum.events if not (event.is_depot_start or event.is_depot_end)]
-            route = TSPWithBranchAndBoundSolver(depot=self.depot, events=events,
-                                                vehicle=self.vehicle, distance_matrix=self.distance_matrix,
-                                                best_cost=best_route.total_cost
-                                                ).solve()
+            route = CTSPWithBranchAndBoundSolver(depot=self.depot, events=events,
+                                                 vehicle=self.vehicle, distance_matrix=self.distance_matrix,
+                                                 best_cost=best_route.total_cost
+                                                 ).solve()
             if route < best_route:
                 best_route.total_cost = route.total_cost
                 best_route.events = route.events
 
-    def get_nearest_neighbor_solutions_in_queue(self, delivery_groups, pickups):
+    def get_nearest_neighbor_solutions_in_queue(self, delivery_groups: List[List[Event]], pickups: List[Event]) -> PriorityQueue:
         priority_queue = PriorityQueue()
         for delivery_group in delivery_groups:
             for pickup in pickups:
-                events = list(delivery_group) + [pickup]
+                events = delivery_group + [pickup]
 
-                route: Route = TSPWithNearestNeighborSolver(depot=self.depot, events=events, vehicle=self.vehicle,
-                                                            distance_matrix=self.distance_matrix).solve()
+                route: Route = CTSPWithNearestNeighborSolver(depot=self.depot, events=events, vehicle=self.vehicle,
+                                                             distance_matrix=self.distance_matrix).solve()
 
                 priority_queue.put(route)
         return priority_queue
