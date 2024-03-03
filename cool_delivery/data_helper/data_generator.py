@@ -6,10 +6,10 @@ import json
 from scipy.spatial.distance import cdist
 import numpy as np
 
-from src.constants.event import EventConstant
-from src.models.depot import Depot
-from src.models.event import Event
-from src.models.vehicle import Vehicle
+from cool_delivery.constants.event import EventConstant
+from cool_delivery.models.depot import Depot
+from cool_delivery.models.event import Event
+from cool_delivery.models.vehicle import Vehicle
 
 
 @dataclass

@@ -3,11 +3,11 @@ from typing import List
 
 import numpy as np
 
-from src.constants.event import EventConstant
-from src.models.depot import Depot
-from src.models.event import Event
-from src.models.route import Route
-from src.models.vehicle import Vehicle
+from cool_delivery.constants.event import EventConstant
+from cool_delivery.models.depot import Depot
+from cool_delivery.models.event import Event
+from cool_delivery.models.route import Route
+from cool_delivery.models.vehicle import Vehicle
 from abc import ABC, abstractmethod
 
 

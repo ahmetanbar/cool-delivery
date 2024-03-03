@@ -1,7 +1,7 @@
 from dataclasses import asdict
 import json
 
-from src.models.route import Route
+from cool_delivery.models.route import Route
 
 
 class OutputHelper:

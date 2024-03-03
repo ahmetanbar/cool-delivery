@@ -1,19 +1,15 @@
 from dataclasses import dataclass, field
 from typing import List
 
-from src.models.event import Event
+from cool_delivery.models.event import Event
 
 
 @dataclass
-class Node:
-    level: int = 0
+class PathManager:
     path: List[Event] = field(default_factory=list)
-    bound: int = 0
-    bound_without_returning: int = 0
     capacity: int = 0
 
-    def __lt__(self, other):
-        return self.bound < other.bound
+    unsuccessful_events: List[Event] = field(default_factory=list)
 
     def add_event(self, event: Event) -> bool:
         """Adds an event to the path and updates the capacity. Returns True if the event was added, False otherwise.

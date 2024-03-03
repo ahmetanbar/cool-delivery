@@ -2,15 +2,15 @@ import matplotlib.pyplot as plt
 import typer
 from loguru import logger
 
-from src.constants.solver import SolverConstant
-from src.data_helper.data_generator import DataGenerator
-from src.data_helper.instance_generator import InstanceGenerator
-from src.data_helper.output_helper import OutputHelper
+from cool_delivery.constants.solver import SolverConstant
+from cool_delivery.data_helper.data_generator import DataGenerator
+from cool_delivery.data_helper.instance_generator import InstanceGenerator
+from cool_delivery.data_helper.output_helper import OutputHelper
 
 app = typer.Typer()
 
-OUTPUT_FOLDER = "src/data/outputs/"
-INPUT_FOLDER = "src/data/inputs/"
+OUTPUT_FOLDER = "cool_delivery/data/outputs/"
+INPUT_FOLDER = "cool_delivery/data/inputs/"
 
 
 def visualize_coordinates(events):
@@ -60,7 +60,7 @@ def solve(solver: SolverConstant.Name, input_file: str, output_file: str, visual
 
 @app.command()
 def generate(pickup_count: int, delivery_count: int, depot_x: int = 0, depot_y: int = 0, output_file="input.json"):
-    output_file = "src/data/inputs/" + output_file
+    output_file = INPUT_FOLDER + output_file
     DataGenerator(pickup_count=pickup_count, delivery_count=delivery_count, depot_x=depot_x, depot_y=depot_y,
                   output_file=output_file).generate()
     logger.debug(f"Data is generated and saved to {output_file}")

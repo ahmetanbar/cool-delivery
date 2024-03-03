@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from src.constants.event import EventConstant
+from cool_delivery.constants.event import EventConstant
 
 
 @dataclass

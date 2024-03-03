@@ -4,9 +4,9 @@ from typing import List
 
 import numpy as np
 
-from src.models.depot import Depot
-from src.models.event import Event
-from src.models.vehicle import Vehicle
+from cool_delivery.models.depot import Depot
+from cool_delivery.models.event import Event
+from cool_delivery.models.vehicle import Vehicle
 
 
 @dataclass

@@ -1,0 +1,125 @@
+{
+  "solver": "maximize_delivery_with_single_pickup",
+  "location_indexes": [
+    0,
+    1,
+    9,
+    6,
+    8,
+    2,
+    5,
+    4,
+    12,
+    7,
+    10,
+    3,
+    0
+  ],
+  "cost": 364,
+  "events": [
+    {
+      "id": 0,
+      "x": 0,
+      "y": 0,
+      "location_index": 0,
+      "capacity": 345,
+      "type": "depot_start"
+    },
+    {
+      "id": 1,
+      "x": 3,
+      "y": 12,
+      "location_index": 1,
+      "capacity": 36,
+      "type": "delivery"
+    },
+    {
+      "id": 9,
+      "x": 21,
+      "y": 34,
+      "location_index": 9,
+      "capacity": 35,
+      "type": "delivery"
+    },
+    {
+      "id": 6,
+      "x": 39,
+      "y": 10,
+      "location_index": 6,
+      "capacity": 32,
+      "type": "delivery"
+    },
+    {
+      "id": 8,
+      "x": 59,
+      "y": 13,
+      "location_index": 8,
+      "capacity": 20,
+      "type": "delivery"
+    },
+    {
+      "id": 2,
+      "x": 65,
+      "y": 8,
+      "location_index": 2,
+      "capacity": 27,
+      "type": "delivery"
+    },
+    {
+      "id": 5,
+      "x": 63,
+      "y": 31,
+      "location_index": 5,
+      "capacity": 46,
+      "type": "delivery"
+    },
+    {
+      "id": 4,
+      "x": 61,
+      "y": 44,
+      "location_index": 4,
+      "capacity": 25,
+      "type": "delivery"
+    },
+    {
+      "id": 12,
+      "x": 79,
+      "y": 51,
+      "location_index": 12,
+      "capacity": 46,
+      "type": "pickup"
+    },
+    {
+      "id": 7,
+      "x": 96,
+      "y": 20,
+      "location_index": 7,
+      "capacity": 44,
+      "type": "delivery"
+    },
+    {
+      "id": 10,
+      "x": 36,
+      "y": 77,
+      "location_index": 10,
+      "capacity": 39,
+      "type": "delivery"
+    },
+    {
+      "id": 3,
+      "x": 14,
+      "y": 72,
+      "location_index": 3,
+      "capacity": 41,
+      "type": "delivery"
+    },
+    {
+      "id": 0,
+      "x": 0,
+      "y": 0,
+      "location_index": 0,
+      "capacity": 46,
+      "type": "depot_end"
+    }
+  ]
+}

@@ -4,11 +4,11 @@ from queue import PriorityQueue
 
 from loguru import logger
 
-from src.models.event import Event
-from src.models.route import Route
-from src.solvers.BaseSolver.solver import BaseSolver
-from src.solvers.CTSPWithNearestNeighbor.solver import Solver as CTSPWithNearestNeighborSolver
-from src.solvers.CTSPWithBranchAndBound.solver import Solver as CTSPWithBranchAndBoundSolver
+from cool_delivery.models.event import Event
+from cool_delivery.models.route import Route
+from cool_delivery.solvers.BaseSolver.solver import BaseSolver
+from cool_delivery.solvers.CTSPWithNearestNeighbor.solver import Solver as CTSPWithNearestNeighborSolver
+from cool_delivery.solvers.CTSPWithBranchAndBound.solver import Solver as CTSPWithBranchAndBoundSolver
 
 
 class Solver(BaseSolver):
@@ -104,10 +104,10 @@ class Solver(BaseSolver):
 
                 if group_capacity <= self.vehicle.capacity and len(group) >= max_count:
                     if len(group) > max_count:
-                        max_groups = [group]
+                        max_groups = [list(group)]
                         max_count = len(group)
                     else:
-                        max_groups.append(group)
+                        max_groups.append(list(group))
 
             if r <= max_count:
                 break

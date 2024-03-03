@@ -3,9 +3,9 @@ from queue import PriorityQueue
 
 from loguru import logger
 
-from src.solvers.BaseSolver.solver import BaseSolver
-from src.solvers.CTSPWithBranchAndBound.models.node import Node
-from src.models.route import Route
+from cool_delivery.solvers.BaseSolver.solver import BaseSolver
+from cool_delivery.solvers.CTSPWithBranchAndBound.models.node import Node
+from cool_delivery.models.route import Route
 
 
 @dataclass
