@@ -1,36 +1,14 @@
-import matplotlib.pyplot as plt
 import typer
 from loguru import logger
 
 from cool_delivery.constants.solver import SolverConstant
-from cool_delivery.data_helper.data_generator import DataGenerator
-from cool_delivery.data_helper.instance_generator import InstanceGenerator
-from cool_delivery.data_helper.output_helper import OutputHelper
+from cool_delivery.data_helper import DataGenerator, InstanceGenerator, OutputHelper, Visualizer
+
 
 app = typer.Typer()
 
 OUTPUT_FOLDER = "cool_delivery/data/outputs/"
 INPUT_FOLDER = "cool_delivery/data/inputs/"
-
-
-def visualize_coordinates(events):
-    coordinates = [(event.x, event.y) for event in events]
-    x, y = zip(*coordinates)
-
-    plt.figure(figsize=(8, 8))
-    plt.scatter(x, y, color='red', marker='o')
-
-    for i in range(len(events)):
-        plt.annotate(f"{events[i].id}", (x[i], y[i]), textcoords="offset points", xytext=(0, 5), ha='center')
-
-    for i in range(len(events) - 1):
-        plt.plot([x[i], x[i + 1]], [y[i], y[i + 1]], color='blue', linestyle='-', linewidth=2)
-
-    plt.title('TSP Coordinate Visualization')
-    plt.xlabel('X-axis')
-    plt.ylabel('Y-axis')
-    plt.grid(True)
-    plt.show()
 
 
 def get_data_from_file(file_path):
@@ -55,7 +33,7 @@ def solve(solver: SolverConstant.Name, input_file: str, output_file: str, visual
     logger.debug(optimal_route)
 
     if visualize:
-        visualize_coordinates(optimal_route.events)
+        Visualizer.visualize_coordinates(optimal_route.events)
 
 
 @app.command()
