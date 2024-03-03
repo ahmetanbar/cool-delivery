@@ -18,3 +18,15 @@ class Depot(Event):
         if self.is_return:
             return self.capacity
         return -self.capacity
+
+    @property
+    def is_delivery(self):
+        return False
+
+    @property
+    def is_pickup(self):
+        return False
+
+    @property
+    def is_depot(self):
+        return True

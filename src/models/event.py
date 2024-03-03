@@ -1,8 +1,9 @@
 from dataclasses import dataclass
+from abc import ABC, abstractmethod
 
 
 @dataclass
-class Event:
+class Event(ABC):
     id: int
     x: int
     y: int
@@ -15,5 +16,21 @@ class Event:
         return isinstance(other, Event) and self.id == other.id
 
     @property
+    @abstractmethod
     def capacity_effect_to_vehicle(self):
-        return self.capacity
+        ...
+
+    @property
+    @abstractmethod
+    def is_delivery(self):
+        ...
+
+    @property
+    @abstractmethod
+    def is_pickup(self):
+        ...
+
+    @property
+    @abstractmethod
+    def is_depot(self):
+        ...

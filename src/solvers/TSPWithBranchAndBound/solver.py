@@ -29,12 +29,12 @@ class Solver:
     events: List[Event]  # pickup and deliveries
     vehicle: Vehicle
     distance_matrix: np.ndarray
+    best_cost: float = float('inf')
 
     depot_to_delivery: Depot = field(init=False)
     depot_to_return: Depot = field(init=False)
     optimal_route: Route = field(init=False)
     deepest_level: int = field(init=False)
-    best_cost: float = field(init=False)
     priority_queue: PriorityQueue = field(init=False)
 
     def __post_init__(self):
@@ -44,7 +44,6 @@ class Solver:
         # Initialize the solver variables.
         self.optimal_route = Route(events=[], total_cost=float('inf'))
         self.deepest_level = len(self.events)
-        self.best_cost = float('inf')
         self.priority_queue = PriorityQueue()
 
     def initialize_depot_events(self):

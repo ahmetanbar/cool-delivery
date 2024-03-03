@@ -14,3 +14,15 @@ class Pickup(Event):
     @property
     def capacity_effect_to_vehicle(self):
         return -self.capacity
+
+    @property
+    def is_delivery(self):
+        return False
+
+    @property
+    def is_pickup(self):
+        return True
+
+    @property
+    def is_depot(self):
+        return False

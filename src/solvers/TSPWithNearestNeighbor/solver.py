@@ -66,15 +66,17 @@ class Solver:
             unvisited_events.remove(nearest_event)
             current_event = nearest_event
 
-            self.put_back_unsuccesul_events(path_manager, unvisited_events)
+            self.put_back_unsuccessful_events(path_manager, unvisited_events)
 
         _ = path_manager.add_event(self.depot_to_return)
 
-        route_distance = sum(self.distance_matrix[path_manager.path[i].id][path_manager.path[i + 1].id] for i in range(num_events))
+        route_distance = sum(self.distance_matrix[path_manager.path[i].id][path_manager.path[i + 1].id]
+                             for i in range(len(path_manager.path) - 1))
         route = Route(events=path_manager.path, total_cost=route_distance)
         print(route)
         return route
 
-    def put_back_unsuccesul_events(self, path_manager, unvisited_events):
+    @staticmethod
+    def put_back_unsuccessful_events(path_manager, unvisited_events):
         if len(path_manager.unsuccessful_events) > 0:
             unvisited_events.update(path_manager.unsuccessful_events)
