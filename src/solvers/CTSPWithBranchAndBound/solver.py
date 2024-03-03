@@ -7,7 +7,7 @@ import numpy as np
 from src.models.delivery import Delivery
 from src.models.depot import Depot
 from src.models.event import Event
-from src.solvers.TSPWithBranchAndBound.models.node import Node
+from src.solvers.CTSPWithBranchAndBound.models.node import Node
 from src.models.pickup import Pickup
 from src.models.route import Route
 from src.models.vehicle import Vehicle

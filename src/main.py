@@ -3,8 +3,8 @@ import cProfile
 
 import matplotlib.pyplot as plt
 
-from src.solvers.TSPWithBranchAndBound.solver import Solver as TSPSolver
-from src.solvers.TSPWithNearestNeighbor.solver import Solver as TSPWithNearestNeighborSolver
+from src.solvers.CTSPWithBranchAndBound.solver import Solver as TSPSolver
+from src.solvers.CTSPWithNearestNeighbor.solver import Solver as TSPWithNearestNeighborSolver
 from src.solvers.CTSPWithMaximumDeliveryAndSinglePickup.solver import Solver as CTSPSolver
 from src.utils.data_generator import DataGenerator
 from src.utils.distance_matrix_generator import DistanceMatrixGenerator

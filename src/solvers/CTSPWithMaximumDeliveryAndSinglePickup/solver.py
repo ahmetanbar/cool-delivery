@@ -9,8 +9,8 @@ from src.models.depot import Depot
 from src.models.event import Event
 from src.models.route import Route
 from src.models.vehicle import Vehicle
-from src.solvers.TSPWithNearestNeighbor.solver import Solver as TSPWithNearestNeighborSolver
-from src.solvers.TSPWithBranchAndBound.solver import Solver as TSPWithBranchAndBoundSolver
+from src.solvers.CTSPWithNearestNeighbor.solver import Solver as TSPWithNearestNeighborSolver
+from src.solvers.CTSPWithBranchAndBound.solver import Solver as TSPWithBranchAndBoundSolver
 
 
 @dataclass

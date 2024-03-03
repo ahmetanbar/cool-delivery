@@ -9,7 +9,7 @@ from src.models.event import Event
 from src.models.pickup import Pickup
 from src.models.route import Route
 from src.models.vehicle import Vehicle
-from src.solvers.TSPWithNearestNeighbor.models.path_manager import PathManager
+from src.solvers.CTSPWithNearestNeighbor.models.path_manager import PathManager
 
 
 @dataclass
