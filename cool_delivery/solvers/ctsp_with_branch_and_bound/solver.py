@@ -19,12 +19,8 @@ class Solver(BaseSolver):
     Best cost parameter is used to be able to start with a defined best cost value when searching in bounds.
     """
     best_cost: float = float('inf')
-    deepest_level: int = field(init=False)
-    priority_queue: PriorityQueue = field(init=False)
-
-    def __post_init__(self):
-        super().__post_init__()
-        self.priority_queue = PriorityQueue()
+    deepest_level: int = None
+    priority_queue: PriorityQueue = field(default_factory=PriorityQueue)
 
     def solve(self):
         if len(self.events) <= 1:
