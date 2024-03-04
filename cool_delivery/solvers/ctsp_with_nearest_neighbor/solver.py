@@ -20,9 +20,6 @@ class Solver(BaseSolver):
     unvisited_events: Set[Event] = field(default_factory=set)
     skipped_events: List[Event] = field(default_factory=list)
 
-    def __post_init__(self):
-        super().__post_init__()
-
     def solve(self):
         self.path_manager = PathManager(capacity=self.vehicle.capacity)
         self.full_path_length = len(self.events) + 2  # 2 is depot events at start and end
