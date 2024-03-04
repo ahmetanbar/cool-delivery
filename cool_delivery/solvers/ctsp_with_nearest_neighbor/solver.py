@@ -1,4 +1,4 @@
-from dataclasses import field
+from dataclasses import dataclass, field
 from typing import List, Set
 
 from loguru import logger
@@ -8,25 +8,27 @@ from .path_manager import PathManager
 from ...models import Event
 
 
+@dataclass
 class Solver(BaseSolver):
     """
     Capacitated Traveling Salesman Problem solver using Nearest Neighbor algorithm.
     The algorithm is used to find the optimal route for the vehicle to visit all the events. Events are the pickup and delivery events.
     The route is a path that starts and ends at the depot.
     """
-    path_manager: PathManager = field(init=False)
-    full_path_length: int = field(init=False)
-    unvisited_events: Set[Event] = field(init=False)
-    skipped_events: List[Event] = field(init=False)
+    path_manager: PathManager = field(default_factory=PathManager)
+    full_path_length: int = 0
+    unvisited_events: Set[Event] = field(default_factory=set)
+    skipped_events: List[Event] = field(default_factory=list)
 
     def __post_init__(self):
         super().__post_init__()
+
+    def solve(self):
         self.path_manager = PathManager(capacity=self.vehicle.capacity)
         self.full_path_length = len(self.events) + 2  # 2 is depot events at start and end
         self.unvisited_events = set(self.events)
         self.skipped_events = []
 
-    def solve(self):
         current_event = self.start_route()
 
         while not self.is_path_completed():
