@@ -3,6 +3,17 @@
 This repository contains three solvers for the CTSPPD implemented in Python. Each solver is designed to find an optimal
 route for a vehicle to visit pickup and delivery events with specific constraints.
 
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [Data Format](#data-format)
+- [Problem Statement](#problem-statement)
+- [Objective Function](#objective-function)
+- [Solvers](#solvers)
+- [Data Generation](#data-generation)
+- [License](#license)
+
 ## Installation
 
 To install the package, you can use the following command:
@@ -14,7 +25,7 @@ pip install cool-delivery@git+https://github.com/ahmetanbar/cool-delivery
 or you can clone the repository and install the package with the following command:
 
 ```bash
-git clone
+git clone https://github.com/ahmetanbar/cool-delivery.git
 cd cool-delivery
 pip install .
 ```
@@ -38,7 +49,7 @@ python -m cool_delivery.__main__.py solve maximize_delivery_with_single_pickup i
 ```
 
 or
-    
+
 ```bash
 cool_delivery solve maximize_delivery_with_single_pickup input_5p_5d.json output_5p_5d.json
 ```
@@ -205,8 +216,11 @@ or
 cool_delivery generate 5 5 input_5p_5d.json
 ```
 
-
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
+## Authors
+
+- Ahmet Anbar
