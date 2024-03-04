@@ -13,5 +13,5 @@ class Route:
         return self.events and self.total_cost < other.total_cost
 
     def __str__(self):
-        event_info = ", ".join(f"({event.id}, {event.type})" for event in self.events)
+        event_info = ", ".join(f"({event.id}, {event.type}, {event.capacity})" for event in self.events)
         return f"\nRoute:\n  -> Cost: {self.total_cost}\n  -> Path: {event_info}"

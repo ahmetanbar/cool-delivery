@@ -38,6 +38,7 @@ def solve(solver: SolverConstant.Name, input_file: str, output_file: str, visual
 
     logger.debug(optimum_route)
 
+    optimum_route = solver_instance.get_solution(as_object=True)
     if visualize:
         Visualizer.visualize_coordinates(optimum_route.events)
 
