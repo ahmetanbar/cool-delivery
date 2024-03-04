@@ -1,7 +1,9 @@
+from copy import deepcopy
+
 import pytest
 
 from cool_delivery.models import Depot, Event
-from cool_delivery.solvers import BaseSolver, CTSPWithNearestNeighborSolver
+from cool_delivery.solvers import BaseSolver, CTSPWithNearestNeighborSolver, CTSPWithBranchAndBoundSolver
 from cool_delivery.solvers.ctsp_with_nearest_neighbor.path_manager import PathManager
 
 
@@ -23,3 +25,12 @@ def ctsp_with_nearest_neighbor_solver(depot: Depot, event: Event, vehicle, dista
 @pytest.fixture
 def path_manager(event: Event):
     return PathManager(capacity=10, path=[event])
+
+
+@pytest.fixture
+def ctsp_with_branch_and_bound_solver(depot: Depot, delivery_event: Event, vehicle, distance_matrix):
+    event_1 = deepcopy(delivery_event)
+    event_2 = deepcopy(delivery_event)
+    event_2.id, event_2.location_index = 2, 2
+
+    return CTSPWithBranchAndBoundSolver(events=[event_1, event_2], depot=depot, vehicle=vehicle, distance_matrix=distance_matrix)

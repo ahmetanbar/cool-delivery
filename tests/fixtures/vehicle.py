@@ -5,4 +5,4 @@ from cool_delivery.models import Vehicle
 
 @pytest.fixture
 def vehicle():
-    return Vehicle()
+    return Vehicle(capacity=100)
