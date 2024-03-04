@@ -25,6 +25,9 @@ class BaseSolver(ABC):
     def __post_init__(self):
         if self.depot and self.events:
             self.create_depot_events()
+        else:
+            self.depot_to_delivery = Event(id=0, location_index=0, x=0, y=0)
+            self.depot_to_return = Event(id=0, location_index=0, x=0, y=0)
 
     @abstractmethod
     def solve(self):  # pragma: no cover
