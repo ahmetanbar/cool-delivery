@@ -34,7 +34,9 @@ class Solver(BaseSolver):
         logger.debug(f'Count of combinations of delivery groups with maximum size: {len(delivery_groups)}.')
         logger.debug(f'Max delivery group size: {max_delivery_group_size}.')
 
-        nearest_solutions_in_queue = self.get_nearest_neighbor_solutions_in_queue(delivery_groups, pickups)
+        delivery_groups_with_single_pickup = self.combine_delivery_groups_with_single_pickup(delivery_groups, pickups)
+
+        nearest_solutions_in_queue = self.get_nearest_neighbor_solutions_in_queue(delivery_groups_with_single_pickup)
 
         can_find_global_optimum = self.can_find_global_optimum(max_delivery_group_size + 1)
 
@@ -74,19 +76,30 @@ class Solver(BaseSolver):
                 best_route.total_cost = route.total_cost
                 best_route.events = route.events
 
-    def get_nearest_neighbor_solutions_in_queue(self, delivery_groups: List[List[Event]], pickups: List[Event]) -> PriorityQueue:
-        priority_queue = PriorityQueue()
+    def combine_delivery_groups_with_single_pickup(self, delivery_groups: List[List[Event]], pickups: List[Event]) -> List[List[Event]]:
+        delivery_groups_with_single_pickup = []
         for delivery_group in delivery_groups:
+            if not pickups:
+                delivery_groups_with_single_pickup.append(delivery_group)
+                continue
             for pickup in pickups:
-                events = delivery_group + [pickup]
+                delivery_groups_with_single_pickup.append(delivery_group + [pickup])
 
-                solver = CTSPWithNearestNeighborSolver(depot=self.depot, events=events, vehicle=self.vehicle,
-                                                       distance_matrix=self.distance_matrix)
-                solver.solve()
-                route = solver.get_solution(as_object=True)
+        return delivery_groups_with_single_pickup
 
-                priority_queue.put(route)
+    def get_nearest_neighbor_solutions_in_queue(self, delivery_groups_with_single_pickup: List[List[Event]]) -> PriorityQueue:
+        priority_queue = PriorityQueue()
+        for deliveries_with_single_pickup in delivery_groups_with_single_pickup:
+            route = self.get_solution_by_nearest_neighbor_solution(deliveries_with_single_pickup)
+            priority_queue.put(route)
         return priority_queue
+
+    def get_solution_by_nearest_neighbor_solution(self, events):
+        solver = CTSPWithNearestNeighborSolver(depot=self.depot, events=events, vehicle=self.vehicle,
+                                               distance_matrix=self.distance_matrix)
+        solver.solve()
+        route = solver.get_solution(as_object=True)
+        return route
 
     def get_deliveries(self) -> List[Event]:
         return [event for event in self.events if event.is_delivery]
