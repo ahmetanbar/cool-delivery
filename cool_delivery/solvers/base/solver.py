@@ -27,7 +27,7 @@ class BaseSolver(ABC):
             self.create_depot_events()
 
     @abstractmethod
-    def solve(self):
+    def solve(self):  # pragma: no cover
         ...
 
     def load_data(self, input_dict: Dict):
