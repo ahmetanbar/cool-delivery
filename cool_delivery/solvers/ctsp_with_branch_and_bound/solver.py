@@ -22,12 +22,10 @@ class Solver(BaseSolver):
     """
     best_cost: float = float('inf')
 
-    optimal_route: Route = field(init=False)
     deepest_level: int = field(init=False)
     priority_queue: PriorityQueue = field(init=False)
 
-    def __post_init__(self):
-        super().__post_init__()
+    def solve(self):
         total_delivery_capacity = sum([event.capacity for event in self.events if event.is_delivery])
         self.depot_to_delivery.capacity = total_delivery_capacity
 
@@ -38,11 +36,9 @@ class Solver(BaseSolver):
             raise ValueError("Delivery or Pickup capacity exceeds vehicle capacity. Solution is not possible.")
 
         # Initialize the solver variables.
-        self.optimal_route = Route(events=[], total_cost=float('inf'))
         self.deepest_level = len(self.events)
         self.priority_queue = PriorityQueue()
 
-    def solve(self) -> Route:
         start_node = Node(capacity=self.vehicle.capacity)
         _ = start_node.add_event(self.depot_to_delivery)
         self.priority_queue.put(start_node)
@@ -56,8 +52,7 @@ class Solver(BaseSolver):
                 for remaining_event in remaining_events:
                     self.iterate_remaining_event(most_promising_node, remaining_event, remaining_events)
 
-        logger.debug(self.optimal_route)
-        return self.optimal_route
+        logger.debug(self.optimum_route)
 
     def bound(self, node: Node):
         bound_without_returning = node.bound_without_returning + self.distance_matrix[node.path[-2].location_index][
@@ -89,7 +84,7 @@ class Solver(BaseSolver):
             if not is_added:
                 return
 
-            self.check_and_set_optimal_route_if_route_is_optimal(node_to_iterate)
+            self.check_and_set_optimum_route_if_route_is_optimum(node_to_iterate)
 
         else:
             self.compare_and_put_node_to_queue(node_to_iterate)
@@ -100,12 +95,12 @@ class Solver(BaseSolver):
         if node.bound < self.best_cost:
             self.priority_queue.put(node)
 
-    def check_and_set_optimal_route_if_route_is_optimal(self, node: Node):
+    def check_and_set_optimum_route_if_route_is_optimum(self, node: Node):
         node.bound, node.bound_without_returning = self.bound(node)
         route_distance = node.bound
         if route_distance < self.best_cost:
             self.best_cost = route_distance
-            self.optimal_route = Route(events=node.path + [self.depot_to_return], total_cost=route_distance)
+            self.optimum_route = Route(events=node.path + [self.depot_to_return], total_cost=route_distance)
 
     def is_node_reach_to_leaf_node(self, node: Node):
         return node.level == (self.deepest_level - 1)

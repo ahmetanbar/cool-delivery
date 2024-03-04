@@ -1,6 +1,5 @@
 from loguru import logger
 
-from cool_delivery.models import Route
 from cool_delivery.solvers import BaseSolver
 from .path_manager import PathManager
 
@@ -12,8 +11,7 @@ class Solver(BaseSolver):
     The route is a path that starts and ends at the depot.
     """
 
-    def __post_init__(self):
-        super().__post_init__()
+    def solve(self):
         total_delivery_capacity = sum([event.capacity for event in self.events if event.is_delivery])
         self.depot_to_delivery.capacity = total_delivery_capacity
 
@@ -23,7 +21,6 @@ class Solver(BaseSolver):
         if self.depot_to_delivery.capacity > self.vehicle.capacity or self.depot_to_return.capacity > self.vehicle.capacity:
             raise ValueError("Delivery or Pickup capacity exceeds vehicle capacity. Solution is not possible.")
 
-    def solve(self) -> Route:
         num_events = len(self.events)
         unvisited_events = set(self.events)
         current_event = self.depot_to_delivery
@@ -50,10 +47,11 @@ class Solver(BaseSolver):
 
         route_distance = sum(self.distance_matrix[path_manager.path[i].location_index][path_manager.path[i + 1].location_index]
                              for i in range(len(path_manager.path) - 1))
-        route = Route(events=path_manager.path, total_cost=route_distance)
 
-        logger.debug(route)
-        return route
+        self.optimum_route.events = path_manager.path
+        self.optimum_route.total_cost = route_distance
+
+        logger.debug(self.optimum_route)
 
     @staticmethod
     def put_back_unsuccessful_events(path_manager, unvisited_events):

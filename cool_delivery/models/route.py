@@ -10,7 +10,7 @@ class Route:
     total_cost: float = 0
 
     def __lt__(self, other):
-        return self.total_cost < other.total_cost
+        return self.events and self.total_cost < other.total_cost
 
     def __str__(self):
         event_info = ", ".join(f"({event.id}, {event.type})" for event in self.events)

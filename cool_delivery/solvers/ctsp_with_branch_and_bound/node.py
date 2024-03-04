@@ -13,7 +13,7 @@ class Node:
     capacity: int = 0
 
     def __lt__(self, other):
-        return self.bound < other.bound
+        return self.path and self.bound < other.bound
 
     def add_event(self, event: Event) -> bool:
         """Adds an event to the path and updates the capacity. Returns True if the event was added, False otherwise.

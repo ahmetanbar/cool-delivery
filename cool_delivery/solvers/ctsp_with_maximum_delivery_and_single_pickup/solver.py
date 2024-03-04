@@ -44,8 +44,8 @@ class Solver(BaseSolver):
         else:
             best_route = nearest_solutions_in_queue.get()
 
+        self.optimum_route = best_route
         logger.debug(best_route)
-        return best_route
 
     def find_best_solution_with_branch_and_bound(self, best_route: Route, priority_queue: PriorityQueue):
         """Finds best solution with branch and bound algorithm.
@@ -63,10 +63,13 @@ class Solver(BaseSolver):
                 best_route.events = route_to_find_global_optimum.events
 
             events = [event for event in route_to_find_global_optimum.events if not (event.is_depot_start or event.is_depot_end)]
-            route = CTSPWithBranchAndBoundSolver(depot=self.depot, events=events,
-                                                 vehicle=self.vehicle, distance_matrix=self.distance_matrix,
-                                                 best_cost=best_route.total_cost
-                                                 ).solve()
+
+            solver = CTSPWithBranchAndBoundSolver(depot=self.depot, events=events,
+                                                  vehicle=self.vehicle, distance_matrix=self.distance_matrix,
+                                                  best_cost=best_route.total_cost)
+            solver.solve()
+            route = solver.get_solution(as_object=True)
+
             if route < best_route:
                 best_route.total_cost = route.total_cost
                 best_route.events = route.events
@@ -77,8 +80,10 @@ class Solver(BaseSolver):
             for pickup in pickups:
                 events = delivery_group + [pickup]
 
-                route: Route = CTSPWithNearestNeighborSolver(depot=self.depot, events=events, vehicle=self.vehicle,
-                                                             distance_matrix=self.distance_matrix).solve()
+                solver = CTSPWithNearestNeighborSolver(depot=self.depot, events=events, vehicle=self.vehicle,
+                                                       distance_matrix=self.distance_matrix)
+                solver.solve()
+                route = solver.get_solution(as_object=True)
 
                 priority_queue.put(route)
         return priority_queue

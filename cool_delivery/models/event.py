@@ -20,7 +20,7 @@ class Event:
 
     @property
     def capacity_effect_to_vehicle(self):
-        if self.is_pickup or self.is_depot_end:
+        if self.is_pickup or self.is_depot_start:
             return -self.capacity
         else:
             return self.capacity
