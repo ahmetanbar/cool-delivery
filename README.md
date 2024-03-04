@@ -3,6 +3,136 @@
 This repository contains three solvers for the CTSPPD implemented in Python. Each solver is designed to find an optimal
 route for a vehicle to visit pickup and delivery events with specific constraints.
 
+## Installation
+
+To install the package, you can use the following command:
+
+```bash
+pip install cool-delivery@git+https://github.com/ahmetanbar/cool-delivery
+```
+
+or you can clone the repository and install the package with the following command:
+
+```bash
+git clone
+cd cool-delivery
+pip install .
+```
+
+## Usage
+
+You can use the solvers by importing them from the package. Here is an example of how to use the solvers:
+
+```python
+from cool_delivery import BranchAndBoundSolver, NearestNeighborSolver, MaximumDeliveryAndSinglePickupSolver
+
+solver = MaximumDeliveryAndSinglePickupSolver()
+solver.load_data(data_dict)
+solution = solver.get_solution()
+```
+
+or you can use the solvers with the following command:
+
+```bash
+python -m cool_delivery.__main__.py solve maximize_delivery_with_single_pickup input_5p_5d.json output_5p_5d.json
+```
+
+or
+    
+```bash
+cool_delivery solve maximize_delivery_with_single_pickup input_5p_5d.json output_5p_5d.json
+```
+
+Please check the `help` command for more information about the usage of the solvers.
+
+```bash
+cool_delivery --help
+```
+
+## Data Format
+
+The solvers use a dictionary to represent the problem. The dictionary should have the following
+keys:
+
+### Input Data
+
+```
+{
+    "depot": {
+        "x": 0,
+        "y": 0,
+        "location_index": 0
+    },
+    "vehicle": {
+      "capacity": 25
+    },
+    "events": [
+        {
+            "x": 1,
+            "y": 1,
+            "location_index": 1,
+            "type": "pickup",
+            "capacity": 25
+        },
+        {
+            "x": 2,
+            "y": 2,
+            "location_index": 2,
+            "type": "delivery",
+            "capacity": 25
+        }
+    ],
+    "distance_matrix": [
+        [0, 1, 2],
+        [1, 0, 3],
+        [2, 3, 0]
+    ]
+}
+```
+
+### Output Data
+
+```
+{
+    {
+  "cost": 6,
+  "events": [
+    {
+      "id": 0,
+      "x": 0,
+      "y": 0,
+      "location_index": 0,
+      "capacity": 20,
+      "type": "depot_start"
+    },
+    {
+      "id": 1,
+      "x": 14,
+      "y": 30,
+      "location_index": 1,
+      "capacity": 20,
+      "type": "delivery"
+    },
+    {
+      "id": 2,
+      "x": 39,
+      "y": 68,
+      "location_index": 2,
+      "capacity": 37,
+      "type": "pickup"
+    },
+    {
+      "id": 0,
+      "x": 0,
+      "y": 0,
+      "location_index": 0,
+      "capacity": 37,
+      "type": "depot_end"
+    }
+  ]
+}
+```
+
 ## Problem Statement:
 
 The Capacitated Traveling Salesman Problem with Pickup and Delivery (CTSPPD) is a variant of the Traveling Salesman
@@ -59,3 +189,24 @@ It employs a combination of heuristics.
    previous step. The best one is selected as the final solution.
 5. If the maximum delivery count is larger than a threshold, the solution with minimum distance found in 3. step is
    selected as the final solution.
+
+## Data Generation
+
+You can use the data generation script to generate random data for the problem. You can use the following command to
+generate data:
+
+```bash
+python -m cool_delivery.__main__.py generate 5 5 input_5p_5d.json
+```
+
+or
+
+```bash
+cool_delivery generate 5 5 input_5p_5d.json
+```
+
+
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
