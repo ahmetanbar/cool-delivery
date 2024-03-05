@@ -35,9 +35,9 @@ pip install .
 You can use the solvers by importing them from the package. Here is an example of how to use the solvers:
 
 ```python
-from cool_delivery import BranchAndBoundSolver, NearestNeighborSolver, MaximumDeliveryAndSinglePickupSolver
+from cool_delivery.solvers import CTSPWithBranchAndBoundSolver, CTSPWithNearestNeighborSolver, CTSPWithMaximumDeliveryAndSinglePickupSolver
 
-solver = MaximumDeliveryAndSinglePickupSolver()
+solver = CTSPWithMaximumDeliveryAndSinglePickupSolver()
 solver.load_data(data_dict)
 solution = solver.get_solution()
 ```
@@ -79,6 +79,7 @@ keys:
     },
     "events": [
         {
+            "id": 1,
             "x": 1,
             "y": 1,
             "location_index": 1,
@@ -86,6 +87,7 @@ keys:
             "capacity": 25
         },
         {
+            "id": 2,
             "x": 2,
             "y": 2,
             "location_index": 2,
