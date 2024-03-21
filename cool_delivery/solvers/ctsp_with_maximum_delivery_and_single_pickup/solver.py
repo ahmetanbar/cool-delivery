@@ -110,28 +110,24 @@ class Solver(BaseSolver):
         return [event for event in self.events if event.is_pickup]
 
     def find_delivery_groups_with_maximum_size(self, deliveries: List[Event]) -> List[List[Event]]:
-        max_groups = []
-        max_count = 0
+        delivery_group = self.find_delivery_group_with_maximum_size(deliveries)
 
-        for r in range(len(deliveries), 0, -1):  # Start from larger combinations
-            delivery_combinations = itertools.combinations(deliveries, r)
+        return [delivery_group]
 
-            logger.debug(f'Finding delivery groups with maximum size: {r}.')
-            logger.debug(f'Count of combinations: {len(list(delivery_combinations))}.')
+    def find_delivery_group_with_maximum_size(self, deliveries):
+        deliveries.sort(key=lambda x: x.capacity)
 
-            for group in delivery_combinations:
-                group_capacity = sum([d.capacity for d in group])
+        delivery_group = []
+        remaining_capacity = self.vehicle.capacity
 
-                if group_capacity <= self.vehicle.capacity and len(group) >= max_count:
-                    if len(group) > max_count:
-                        max_groups = [list(group)]
-                        max_count = len(group)
-                    else:
-                        max_groups.append(list(group))
-
-            if r <= max_count:
+        for delivery in deliveries:
+            if delivery.capacity <= remaining_capacity:
+                delivery_group.append(delivery)
+                remaining_capacity -= delivery.capacity
+            else:
                 break
-        return max_groups
+
+        return delivery_group
 
     @classmethod
     def can_find_global_optimum(cls, event_count: int) -> bool:

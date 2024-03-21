@@ -79,6 +79,17 @@ def test_find_delivery_groups_with_maximum_size(ctsp_maximum_delivery_and_single
     assert len(delivery_groups_with_maximum_size) == 1
     assert len(delivery_groups_with_maximum_size[0]) == 5
 
+def test_find_delivery_group_with_maximum_size(ctsp_maximum_delivery_and_single_pickup, delivery_event):
+    deliveries = [delivery_event, delivery_event, delivery_event, delivery_event, delivery_event]
+    delivery_groups_with_maximum_size = ctsp_maximum_delivery_and_single_pickup.find_delivery_group_with_maximum_size(deliveries)
+    assert len(delivery_groups_with_maximum_size) == 5
+
+    delivery_event_big_size = deepcopy(delivery_event)
+    delivery_event_big_size.capacity = 1000
+    deliveries = [delivery_event_big_size, delivery_event, delivery_event, delivery_event, delivery_event, delivery_event]
+    delivery_groups_with_maximum_size = ctsp_maximum_delivery_and_single_pickup.find_delivery_group_with_maximum_size(deliveries)
+    assert len(delivery_groups_with_maximum_size) == 5
+
 
 def test_can_find_global_optimum(ctsp_maximum_delivery_and_single_pickup):
     assert ctsp_maximum_delivery_and_single_pickup.can_find_global_optimum(5) == True
