@@ -45,7 +45,7 @@ solution = solver.get_solution()
 or you can use the solvers with the following command:
 
 ```bash
-python -m cool_delivery.__main__.py solve maximize_delivery_with_single_pickup input_5p_5d.json output_5p_5d.json
+python -m cool_delivery.__main__ solve maximize_delivery_with_single_pickup input_5p_5d.json output_5p_5d.json
 ```
 
 or
