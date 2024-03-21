@@ -26,6 +26,8 @@ class Solver(BaseSolver):
     MAXIMUM_TRY_COUNT_WITH_NEAREST_NEIGHBOR_SOLUTIONS = 10
 
     def solve(self):
+        logger.debug("Solving with Maximum Delivery and Single Pickup problem.")
+
         pickups = self.get_pickups()
         deliveries = self.get_deliveries()
 
@@ -113,6 +115,9 @@ class Solver(BaseSolver):
 
         for r in range(len(deliveries), 0, -1):  # Start from larger combinations
             delivery_combinations = itertools.combinations(deliveries, r)
+
+            logger.debug(f'Finding delivery groups with maximum size: {r}.')
+            logger.debug(f'Count of combinations: {len(list(delivery_combinations))}.')
 
             for group in delivery_combinations:
                 group_capacity = sum([d.capacity for d in group])
