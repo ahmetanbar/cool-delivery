@@ -107,7 +107,6 @@ keys:
 
 ```
 {
-    {
   "cost": 6,
   "events": [
     {
@@ -209,7 +208,7 @@ You can use the data generation script to generate random data for the problem. 
 generate data:
 
 ```bash
-python -m cool_delivery.__main__.py generate 5 5 input_5p_5d.json
+python -m cool_delivery.__main__ generate 5 5 input_5p_5d.json
 ```
 
 or
